@@ -1,4 +1,4 @@
-import React,{useCallback, useEffect,useState }  from 'react'
+import React,{useCallback, useEffect,useState}  from 'react'
 import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
 import { fetchArticles } from '../../services/ArticleService';
 
@@ -23,7 +23,7 @@ const Printdocument = () => {
 
   return (
     <div className="App">
-
+{products ? <>
 <PDFViewer width={800} height={600} showToolbar={false}>
         <Printarticles data={products} />
   </PDFViewer>
@@ -37,6 +37,9 @@ const Printdocument = () => {
       : <button>Print PDF</button>  )}
   
 </PDFDownloadLink>
+</>
+: <div>loading</div>}
+
 
 </div>
 
