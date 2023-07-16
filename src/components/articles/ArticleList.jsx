@@ -12,10 +12,7 @@ const ArticleList = ({articles,deleteProduct,scategories,updateProduct}) => {
    deleteProduct(id,ref)
   }
   
- 
-
-
-    const columns = useMemo(
+  const columns = useMemo(
         () => [
             {
             accessorKey: 'imageart', //access nested data with dot notation

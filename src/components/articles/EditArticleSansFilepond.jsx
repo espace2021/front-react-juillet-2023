@@ -8,16 +8,6 @@ import Modal from 'react-bootstrap/Modal';
 import { editArticle } from '../../services/ArticleService';
 
 
-import {UploadFirebase} from '../../utils/UploadFirebase';
-
-import { FilePond,registerPlugin } from 'react-filepond'
-import 'filepond/dist/filepond.min.css';
-import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation'
-import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
-import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css'
-
-registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview)
-
 
 const EditArticle = ({art,scategories,updateProduct}) => {
     
@@ -31,17 +21,13 @@ const EditArticle = ({art,scategories,updateProduct}) => {
 
   const [validated, setValidated] = useState(false);
 
-  const [file, setFile] = useState("");
-
 const [show, setShow] = useState(false);
 const handleClose = () => setShow(false);
 const handleShow = () => setShow(true);
 
 
-   const handleSubmit = (url) => {
-
-    setImageart(url);
-
+const handleSubmit = (e) => {
+    e.preventDefault();
   const prmod = {
     ...art,
     reference,
@@ -49,74 +35,15 @@ const handleShow = () => setShow(true);
         prix, 
         marque,
         qtestock, 
-        imageart:url,
+        imageart,
         scategorieID
   };
   console.log(prmod)
   editArticle(prmod)
-.then(res=> {
-   //update dans le tableau affiché
-   updateProduct(prmod)
-          //vider le form
-          setReference('');
-          setDesignation('');
-          setPrix('');
-          setMarque('');
-          setQtestock('');
-          setImageart('');
-          setScategorieID('');
-          setValidated(false);
-          setFile("")
-      
-   })
+.then(updateProduct(prmod))
 .catch(error=>console.log(error))
 handleClose()
 }
-
-const handleUpload = (event) => {
-  event.preventDefault();
-  const form = event.currentTarget;
- if (form.checkValidity() === true) {
-  if (!file) {
-    const url = imageart;
-    handleSubmit(url);
-  }
-  else {
-    console.log(file[0].file)
-    resultHandleUpload(file[0].file);
- }
-    }
- setValidated(true);
-};
-
-const resultHandleUpload = async(file) => {
-  
-  try {
-   
-  const url =  await UploadFirebase(file);
-  console.log(url);
-
-  handleSubmit(url)
- } catch (error) {
-    console.log(error);
- }
-
-}
-
-  const handleReset=()=>{
-    setReference('');
-      setDesignation('');
-      setPrix('');
-      setMarque('');
-      setQtestock('');
-      setImageart('');
-      setScategorieID('');
-      setValidated(false);
-      setFile("")
-      handleClose()
-
-  }
-
   return (
     <div>
       <Button                 
@@ -127,13 +54,13 @@ const resultHandleUpload = async(file) => {
         className="text-warning btn-link edit"
 
       >
-      <i className="fa-solid fa-pen-to-square"></i>
+      <i class="fa-solid fa-pen-to-square"></i>
       
       </Button>
       
                   
   <Modal show={show} onHide={handleClose}>
-  <Form noValidate validated={validated} onSubmit={handleUpload}>
+     <Form noValidate validated={validated} onSubmit={handleSubmit}>
   <Modal.Header closeButton>
       <h2>Modification Product</h2>
   </Modal.Header>
@@ -214,15 +141,12 @@ Qté stock Incorrect
 </Form.Group>
 <Form.Group as={Col} md="6">
 <Form.Label>Image</Form.Label>
-{!file?<img src={imageart} style={{width:50, height:50}}/> :null} 
-<FilePond
-              files={file}
-              allowMultiple={false}
-              onupdatefiles={setFile}
-              labelIdle='<span class="filepond--label-action">Browse One</span>'
-            
-            />
-
+<Form.Control
+type="text"
+placeholder="Image"
+value={imageart}
+onChange={(e)=>setImageart(e.target.value)}
+/>
 </Form.Group>
 <Form.Group as={Col} md="12">
 <Form.Label>S/Catégorie</Form.Label>
@@ -247,7 +171,7 @@ value={scat._id}>{scat.nomscategorie}</option>
 </Modal.Body>
 <Modal.Footer>
 <Button type="submit">Enregistrer</Button>
-<Button type="button" className="btn btn-warning" onClick={()=>handleReset()}>Annuler</Button>
+<Button type="button" className="btn btn-warning" >Annuler</Button>
 </Modal.Footer>
 </Form>
 </Modal>
