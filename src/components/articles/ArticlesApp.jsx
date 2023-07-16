@@ -5,14 +5,19 @@ import ArticleList from './ArticleList';
 import Createarticle from './Createarticle';
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
+
+import Button from 'react-bootstrap/Button';
+import { useNavigate } from 'react-router-dom';
+
 const ArticlesApp = () => {
+
+  const navigation=useNavigate()
 
     const [products,setProducts]=useState(null)
     const [scategories,setScategories]=useState([])
    
-    
-
-       const listproduits= useCallback(()=>{
+   
+     const listproduits= useCallback(()=>{
         fetchArticles()
         .then((res1)=>{setProducts(res1.data)
         return res1;
@@ -21,6 +26,7 @@ const ArticlesApp = () => {
         
         .catch(err=>console.log(err))
        },[])
+
        const listscategories=useCallback(()=>{
         fetchSCategories()
         .then((res)=>{setScategories(res.data)
@@ -41,10 +47,10 @@ const ArticlesApp = () => {
        useEffect(() => {
         listscategories()
        
-                   
+            
        },[listscategories])
        
-       const addproduct=(newproduit)=>{
+    const addproduct=(newproduit)=>{
         setProducts([newproduit,...products])
     }
 
@@ -82,6 +88,17 @@ const ArticlesApp = () => {
             };
   return (
     <div>
+         <Button  
+               
+        onClick={()=>navigation("/printart")}
+        variant="default"
+        size="sm"
+         style={{float: 'left','margin':10,'left':10,fontFamily:'Arial'}}
+      >
+      <i className="fa-solid fa-print">  </i>
+               Print PDF
+      </Button>
+
       <Createarticle addProduct={addproduct} scategories={scategories} />
       <ArticleList articles={products} deleteProduct={deleteProduct} scategories={scategories} updateProduct={updateProduct}/>
     </div>
