@@ -16,7 +16,7 @@ function App() {
         <Route path='/articles' element={<ArticlesApp/>}/>
         <Route path='/categories' element={<CategorieApp/>}/>
         <Route path='/scategories' element={<Scategorie/>}/>
-        <Route path='/printart' element={<Printdocument/>}/>
+        <Route path='/printart/:products' element={<Printdocument/>}/>
       </Routes>
       </Router>
     </div>

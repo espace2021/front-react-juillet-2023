@@ -86,11 +86,28 @@ const ArticlesApp = () => {
             );
            
             };
+
+        const [query, setquery] = useState('')
+        const handleChange = (e) => {
+          const results = products.filter(pro => {
+              if (e.target.value === "") return products
+              return pro.designation.toLowerCase().includes(e.target.value.toLowerCase())
+          })
+        
+            setquery(e.target.value)
+              setProducts(results)
+         
+      }
   return (
     <div>
+       <div>
+        <form>
+        <input type="search" value={query} onChange={handleChange}/>
+        </form>
+    </div>
          <Button  
                
-        onClick={()=>navigation("/printart")}
+        onClick={()=>navigation(`/printart/${products})}`)}
         variant="default"
         size="sm"
          style={{float: 'left','margin':10,'left':10,fontFamily:'Arial'}}

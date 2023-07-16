@@ -3,10 +3,14 @@ import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
 import { fetchArticles } from '../../services/ArticleService';
 
 import Printarticles from './Printarticles';
+import { useParams } from 'react-router-dom';
 
 const Printdocument = () => {
 
-    const [products,setProducts]=useState(null)
+  const params = useParams()
+const products=JSON.parse(params.products)
+console.log(params)
+ /*   const [products,setProducts]=useState(null)
  
     const listproduits= useCallback(()=>{
         fetchArticles()
@@ -20,7 +24,7 @@ const Printdocument = () => {
         listproduits()
                         
        },[listproduits])  
-
+*/
   return (
     <div className="App">
 {products ? <>
