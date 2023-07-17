@@ -7,7 +7,7 @@ import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 
 import Button from 'react-bootstrap/Button';
-import { useNavigate ,Link} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const ArticlesApp = () => {
 
@@ -87,36 +87,19 @@ const ArticlesApp = () => {
            
             };
 
-        const [query, setquery] = useState('')
-        const handleChange = (e) => {
-          const results = products.filter(pro => {
-              if (e.target.value === "") return products
-              return pro.designation.toLowerCase().includes(e.target.value.toLowerCase())
-          })
-              setquery(e.target.value)
-              setProducts(results)
-          }
-
+  
   return (
     <div>
-   
-       <div>
-        <form>
-        <input type="search" value={query} onChange={handleChange}/>
-        </form>
-    </div>
-   
+       
          <Button  
-              
+               
+        onClick={()=>navigation(`/printart/`)}
         variant="default"
         size="sm"
          style={{float: 'left','margin':10,'left':10,fontFamily:'Arial'}}
       >
-         <Link to="/printart" state={{ products: products }} >
-         <i className="fa-solid fa-print">  </i>
+      <i className="fa-solid fa-print">  </i>
                Print PDF
-         </Link>
-      
       </Button>
 
       <Createarticle addProduct={addproduct} scategories={scategories} />

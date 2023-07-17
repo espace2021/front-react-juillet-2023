@@ -1,17 +1,26 @@
 import React,{useCallback, useEffect,useState}  from 'react'
 import { PDFDownloadLink, PDFViewer } from "@react-pdf/renderer";
+import { fetchArticles } from '../../services/ArticleService';
 
 import Printarticles from './Printarticles';
 
-import { useLocation } from "react-router-dom";
 
-const Printdocument = (props) => {
+const Printdocument = () => {
+
+   const [products,setProducts]=useState(null)
  
-const location = useLocation();
-console.log(props, " props");
-console.log(location, " useLocation Hook");
-const products = location.state?.products;
-console.log(products)
+    const listproduits= useCallback(()=>{
+        fetchArticles()
+        .then((res1)=>{setProducts(res1.data)
+        return res1;
+       })
+        .catch(err=>console.log(err))
+       },[])
+
+       useEffect(() => {
+        listproduits()
+                        
+       },[listproduits])  
 
   return (
     <div className="App">

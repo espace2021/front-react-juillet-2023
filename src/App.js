@@ -13,10 +13,11 @@ function App() {
       <Router>
       <NavScroll/>
       <Routes>
+     
         <Route path='/articles' element={<ArticlesApp/>}/>
         <Route path='/categories' element={<CategorieApp/>}/>
         <Route path='/scategories' element={<Scategorie/>}/>
-        <Route path='/printart/:products' element={<Printdocument/>}/>
+        <Route path='/printart' element={<Printdocument/>}/>
       </Routes>
       </Router>
     </div>
