@@ -7,12 +7,11 @@ import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 
 import Button from 'react-bootstrap/Button';
-import { useNavigate ,Link} from 'react-router-dom';
+import { Link} from 'react-router-dom';
 
 const ArticlesApp = () => {
 
-  const navigation=useNavigate()
-
+ 
     const [products,setProducts]=useState(null)
     const [scategories,setScategories]=useState([])
    

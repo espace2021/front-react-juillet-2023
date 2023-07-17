@@ -6,7 +6,7 @@ return await Api.get(SCATEGORIE_API);
 export const fetchSCategorieById=async(scategorieId)=> {
 return await Api.get(SCATEGORIE_API + '/' + scategorieId);
 }
-const fetchSCategorieByCat=(idcat) =>{return Api.get(SCATEGORIE_API + '/cat/' + idcat);
+export const fetchSCategorieByCat=(idcat) =>{return Api.get(SCATEGORIE_API + '/cat/' + idcat);
 }
 export const deleteSCategorie=async(scategorieId) =>{
 return await Api.delete(SCATEGORIE_API + '/' + scategorieId);

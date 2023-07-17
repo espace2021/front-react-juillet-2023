@@ -6,13 +6,38 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import {Link } from "react-router-dom"
-import Printdocument from './articles/Printdocument';
+
+import Badge from '@mui/material/Badge';
+import IconButton from '@mui/material/IconButton';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const NavScroll = () => {
+
+  const navigate = useNavigate();
+  const {cartTotalQuantity} = useSelector((state) => state.storecart);
+
   return (
     <Navbar expand="lg" className="bg-body-tertiary">
       <Container fluid>
-        <Navbar.Brand href="#">Navbar scroll</Navbar.Brand>
+
+         <IconButton size="large"
+            edge="end"
+            aria-label="account of current user"
+      
+            aria-haspopup="true"
+         
+            color="error"
+            onClick={()=>{navigate("/cart")}}
+            >
+              
+            <ShoppingCartIcon sx={{ fontSize: 40 }}/>
+            <Badge badgeContent={cartTotalQuantity>0?cartTotalQuantity:0} color="success">
+              </Badge>
+            </IconButton>
+
+        <Navbar.Brand href="#"> </Navbar.Brand>
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
           <Nav

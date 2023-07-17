@@ -1,0 +1,11 @@
+{
+    "version": 2,
+    "name": "nodejs-mongodb",
+    "builds": [
+      { "src": "app.js", "use": "@vercel/node" },
+      { "installCommand" : "npm install --force" }
+    ],
+    "routes": [
+      { "src": "/(.*)", "dest": "/app.js" }
+    ]
+  }
