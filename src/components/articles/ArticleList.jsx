@@ -71,7 +71,7 @@ const ArticleList = ({articles,deleteProduct,scategories,updateProduct}) => {
               accessorKey: '_id',
               header: 'actions',
               size: 100,
-              Cell: ({ cell, row }) => (
+              Cell: ({ cell, row }) => ( 
                 <div >
        
                  <EditArticle art={cell.row.original} scategories={scategories} updateProduct={updateProduct}/>

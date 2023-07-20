@@ -11,6 +11,7 @@ import Cart from './components/articlesRedux/Cart';
 import CheckoutSuccess from './components/articlesRedux/CheckoutSuccess';
 import PdfCart from './components/articlesRedux/PdfCart';
 import StripePayment from './components/articlesRedux/StripePayment';
+import ArticlesCards from './components/articlesRedux/ArticlesCards';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         <Route path="/ckeckout" element={<CheckoutSuccess/>}/>
         <Route path="/pdfcart" element={<PdfCart/>}/>
         <Route path='/pay/:total' element={<StripePayment/>}/>
+        <Route path="/articlesCardsPag" element={<ArticlesCards/>}/>
       </Routes>
       </Router>
     </div>

@@ -4,6 +4,21 @@ import { StyleSheet, Text, View } from '@react-pdf/renderer'
 import { Page, Image, Document } from "@react-pdf/renderer";
 const Printarticles = ({data}) => {
 
+  const convert64 =async(img)=>{
+        const base64 = await fetch("https://citymode.tn/37466-thickbox_default/dumb-bell-haltere-3-kg.jpg")
+        .then(response => response.blob())
+        .then(blob => {
+          const reader = new FileReader();
+          reader.readAsDataURL(blob);
+          return new Promise((res) => {
+            reader.onloadend = () => {
+            res(reader.result);
+          }})
+        })
+  return base64
+  }
+  
+
   const styles = StyleSheet.create({
     body: {
         paddingTop: 35,
@@ -96,7 +111,13 @@ const Printarticles = ({data}) => {
       {data?.map((row, i) => (
           <View key={i} style={styles.row} wrap={false}>
              <Text style={styles.row1}>
-             <Image src={row.imageart} style={styles.image}/>   
+           <Image src={row.imageart} style={styles.image} />  
+           {/*  <Image src={{ uri: row.imageart, method: "GET", headers: { "Cache-Control": "no-cache","Access-Control-Allow-Origin": "*" }, body: "" }} /> 
+           <Image
+          src= {"data:image/png;base64,"+`${convert64(row.imageart)}`}
+          style={styles.image} 
+          />
+          */}
              </Text>
              <Text style={styles.row1}>
             <Text style={styles.bold}>{row.designation}</Text>

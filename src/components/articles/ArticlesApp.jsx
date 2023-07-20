@@ -14,9 +14,8 @@ const ArticlesApp = () => {
  
     const [products,setProducts]=useState(null)
     const [scategories,setScategories]=useState([])
-   
-   
-     const listproduits= useCallback(()=>{
+  
+      const listproduits= useCallback(()=>{
         fetchArticles()
         .then((res1)=>{setProducts(res1.data)
         return res1;
@@ -45,12 +44,42 @@ const ArticlesApp = () => {
 
        useEffect(() => {
         listscategories()
-       
-            
+                   
        },[listscategories])
+   
+    /*
+       const listproduits=()=>{
+        fetchArticles()
+        .then((res1)=>{setProducts(res1.data)
+        return res1;
+       })
+        .then((res1)=>{console.log(res1.data)})
+        
+        .catch(err=>console.log(err))
+       }
+
+       const listscategories=()=>{
+        fetchSCategories()
+        .then((res)=>{setScategories(res.data)
+          return res;
+        })
+        .then((res)=>{console.log(res.data)})
+
+        
+        .catch(err=>console.log(err))
+       }
+
+       useEffect(() => {
+        listproduits()
+        listscategories()
+                   
+       },[])
+
+       */
        
-    const addproduct=(newproduit)=>{
+    const addproduct =(newproduit)=>{
         setProducts([newproduit,...products])
+        console.log(products)
     }
 
     const deleteProduct = (productId,ref) => {

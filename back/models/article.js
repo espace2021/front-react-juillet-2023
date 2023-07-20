@@ -1,5 +1,7 @@
 const  mongoose  =require("mongoose")
 const Scategorie =require("./scategorie.js");
+//const mongoosePaginate = require('mongoose-paginate-v2');
+
 const articleSchema=mongoose.Schema({
     reference:{ type: String, required: true,unique:true },
     designation:{ type: String, required: true,unique:true },
@@ -10,4 +12,7 @@ const articleSchema=mongoose.Schema({
     scategorieID: {type:mongoose.Schema.Types.ObjectId,
     ref:Scategorie}
     })
-    module.exports=mongoose.model('article',articleSchema)
+    
+//articleSchema.plugin(mongoosePaginate);
+
+module.exports=mongoose.model('article',articleSchema)

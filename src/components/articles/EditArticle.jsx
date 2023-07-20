@@ -100,7 +100,7 @@ const resultHandleUpload = async(file) => {
  } catch (error) {
     console.log(error);
  }
-
+ handleReset()
 }
 
   const handleReset=()=>{

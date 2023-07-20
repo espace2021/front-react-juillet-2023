@@ -1,5 +1,5 @@
 import { createSlice,createAsyncThunk } from '@reduxjs/toolkit'
-import {fetchArticles,addArticle,deleteArticle,editArticle,fetchArticleById} from "../services/ArticleService"
+import {fetchArticles,addArticle,deleteArticle,editArticle,fetchArticleById,fetchArticlesPagServ} from "../services/ArticleService"
 
 export const getArticles = createAsyncThunk(
     "article/getArticles",
@@ -70,6 +70,30 @@ export const getArticles = createAsyncThunk(
       return rejectWithValue(error.message);
     }
     });
+
+// Create an asynchronous thunk to fetch paginated article data from the server
+
+export const fetchArticlesPag = createAsyncThunk( 
+
+  'articles/fetchArticlesPag',
+
+  async (mesParams,thunkAPI) => {  
+    const { rejectWithValue } = thunkAPI;
+    try{
+      const res = await fetchArticlesPagServ(mesParams.currentPage,mesParams.itemsPerPage)
+     
+      return res;
+
+    } catch (error) {
+
+      return rejectWithValue(error.message);
+
+    }
+
+  }
+
+);
+
 export const articleSlice = createSlice({
   name: 'article',
   initialState:{
@@ -154,12 +178,35 @@ export const articleSlice = createSlice({
         
       })
     .addCase(
-     findArticleByID.fulfilled,(state, action) => {
+     findArticleByID.fulfilled,(state, action) => { 
       state.isLoading = false
       state.error = null
       state.article=action.payload;
    })
-   
+   //Paginate
+   .addCase(fetchArticlesPag.pending, (state) => {
+
+    state.isLoading = true;
+
+    state.error = null;
+
+  })
+
+  .addCase(fetchArticlesPag.fulfilled, (state, action) => {
+
+    state.isLoading = false;
+
+    state.articles = action.payload;
+    
+  })
+
+  .addCase(fetchArticlesPag.rejected, (state, action) => {
+
+    state.isLoading = false;
+
+    state.error = action.payload;
+
+  });
   }
 
   }
