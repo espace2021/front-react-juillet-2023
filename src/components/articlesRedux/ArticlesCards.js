@@ -4,7 +4,11 @@ import { useDispatch} from 'react-redux';
 
 import { fetchArticlesPag  } from '../../features/articleSlice'; 
 
-import ArticlesCardsAffiche from './ArticlesCardsAffiche'
+import ArticlesCardsAffiche from './ArticlesCardsAffiche';
+
+// npm install react-responsive-pagination
+import ResponsivePagination from 'react-responsive-pagination';
+import 'react-responsive-pagination/themes/classic.css';
 
 const CardsList = () => {
 
@@ -12,7 +16,7 @@ const CardsList = () => {
 
 
       const [currentPage, setCurrentPage] = useState(1);
-      const itemsPerPage = 10;
+      const itemsPerPage = 5;
     
       const indexOfLastItem = currentPage * itemsPerPage;
       const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -24,7 +28,7 @@ const CardsList = () => {
           itemsPerPage:itemsPerPage
         };
         dispatch(fetchArticlesPag(mesParams));
-      }, [dispatch])
+      }, [currentPage,dispatch])
     
       useEffect(() => {
         cardsFetch()
@@ -34,8 +38,15 @@ const CardsList = () => {
 
 
   return (
-
-  <ArticlesCardsAffiche />
+<>
+<ArticlesCardsAffiche />
+<ResponsivePagination
+      current={currentPage}
+      total={itemsPerPage}
+      onPageChange={setCurrentPage}
+    />
+</>
+ 
 
   );
 
