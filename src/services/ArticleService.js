@@ -26,3 +26,7 @@ export const fetchArticlesPagServ=async(page,limit)=> {
      const data = await response.json();
      return await data
     }
+
+export const fetchTot=async()=> {
+     return await Api.get(ARTICLE_API+"/nombreTot/");
+     }    

@@ -103,6 +103,19 @@ router.get('/filtres/', async(req, res) => {
 }
 });
 
+// nombre total des enregistrements
+router.get('/nombreTot/', async (req, res, )=> {
+  try {
+      const articles = await Article.find().exec();
+              
+      res.status(200).json({tot:articles.length});
+  } catch (error) {
+      res.status(404).json({ message: error.message });
+  }
+
+});
+
+
 // créer un nouvel article
 router.post('/', async (req, res) =>  { 
 

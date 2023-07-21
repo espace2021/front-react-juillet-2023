@@ -1,5 +1,5 @@
 import { createSlice,createAsyncThunk } from '@reduxjs/toolkit'
-import {fetchArticles,addArticle,deleteArticle,editArticle,fetchArticleById,fetchArticlesPagServ} from "../services/ArticleService"
+import {fetchArticles,addArticle,deleteArticle,editArticle,fetchArticleById,fetchArticlesPagServ,fetchTot} from "../services/ArticleService"
 
 export const getArticles = createAsyncThunk(
     "article/getArticles",
@@ -94,6 +94,20 @@ export const fetchArticlesPag = createAsyncThunk(
 
 );
 
+export const getTot = createAsyncThunk(
+  "article/getTot",
+  async (_, thunkAPI) => {
+    const { rejectWithValue } = thunkAPI;
+    try {
+    const res = await fetchTot();
+    return res.data.tot;
+    }
+    catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 export const articleSlice = createSlice({
   name: 'article',
   initialState:{
@@ -102,6 +116,7 @@ export const articleSlice = createSlice({
     isLoading: false,
     success:null,
     error:null,
+    tot:5
   },
   
   
@@ -205,6 +220,25 @@ export const articleSlice = createSlice({
     state.isLoading = false;
 
     state.error = action.payload;
+
+  })
+
+  //TOT nb Pages
+  .addCase(getTot.pending, (state) => {
+
+     state.error = null;
+
+  })
+
+  .addCase(getTot.fulfilled, (state, action) => {
+
+     state.tot = action.payload;
+    
+  })
+
+  .addCase(getTot.rejected, (state, action) => {
+
+     state.error = action.payload;
 
   });
   }
