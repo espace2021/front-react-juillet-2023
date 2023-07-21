@@ -1,5 +1,5 @@
 import { createSlice,createAsyncThunk } from '@reduxjs/toolkit'
-import {fetchArticles,addArticle,deleteArticle,editArticle,fetchArticleById,fetchArticlesPagServ,fetchTot} from "../services/ArticleService"
+import {fetchArticles,addArticle,deleteArticle,editArticle,fetchArticleById,fetchArticlesPagServ} from "../services/ArticleService"
 
 export const getArticles = createAsyncThunk(
     "article/getArticles",
@@ -80,7 +80,7 @@ export const fetchArticlesPag = createAsyncThunk(
   async (mesParams,thunkAPI) => {  
     const { rejectWithValue } = thunkAPI;
     try{
-      const res = await fetchArticlesPagServ(mesParams.currentPage,mesParams.itemsPerPage)
+      const res = await fetchArticlesPagServ(mesParams.filtre,mesParams.currentPage,mesParams.itemsPerPage)
      
       return res;
 
@@ -93,7 +93,7 @@ export const fetchArticlesPag = createAsyncThunk(
   }
 
 );
-
+/*
 export const getTot = createAsyncThunk(
   "article/getTot",
   async (_, thunkAPI) => {
@@ -107,7 +107,7 @@ export const getTot = createAsyncThunk(
     }
   }
 );
-
+*/
 export const articleSlice = createSlice({
   name: 'article',
   initialState:{
@@ -211,7 +211,9 @@ export const articleSlice = createSlice({
 
     state.isLoading = false;
 
-    state.articles = action.payload;
+    state.articles = action.payload.articles;
+
+    state.tot = action.payload.longueur;
     
   })
 
@@ -222,7 +224,7 @@ export const articleSlice = createSlice({
     state.error = action.payload;
 
   })
-
+/*
   //TOT nb Pages
   .addCase(getTot.pending, (state) => {
 
@@ -241,6 +243,7 @@ export const articleSlice = createSlice({
      state.error = action.payload;
 
   });
+  */
   }
 
   }

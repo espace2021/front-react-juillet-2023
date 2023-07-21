@@ -21,12 +21,14 @@ export const editArticle=(article) =>{
 return Api.put(ARTICLE_API + '/' + article._id, article);
 }
 
-export const fetchArticlesPagServ=async(page,limit)=> {
-     const response = await fetch(`http://localhost:3001/api/articles/filtres?page=${page}&limit=${limit}`);
+export const fetchArticlesPagServ=async(filtre,page,limit)=> {
+     const response = await fetch(`http://localhost:3001/api/articles/filtres?filtre=${filtre}&page=${page}&limit=${limit}`);
      const data = await response.json();
      return await data
     }
 
+    /*
 export const fetchTot=async()=> {
      return await Api.get(ARTICLE_API+"/nombreTot/");
      }    
+     */

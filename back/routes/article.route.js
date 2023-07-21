@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Article=require("../models/article")
 
-const mongoosePaginate = require('mongoose-paginate-v2');
+//const mongoosePaginate = require('mongoose-paginate-v2');
 
 //const {verifyToken} =require("../middleware/verif-token")
 //const { uploadFile } = require('../middleware/upload-file')
@@ -83,10 +83,40 @@ const title = req.query.title || "articles"
 });
 */
 
+// 2 ème solution paginate avec filtre
+
+router.get('/filtres/', async(req, res) => {
+
+  const filtre = req.query.filtre || ""; 
+  const page = req.query.page || 1; // Get the current page number from the query parameters
+  const limit = req.query.limit ||5; // Number of items per page
+
+  // Calculez le nombre d'éléments à sauter (offset)
+  const offset = (page - 1) * limit;
+  try {
+  // Effectuez la requête à votre source de données en utilisant les paramètres de pagination
+  // $option is used to make the search case insensitive.
+  const articles = await Article.find({ designation: { $regex: filtre, $options: "i" }}, null, {sort: {'_id': -1}})
+    .skip(offset)
+    .limit(limit)
+    .populate("scategorieID").exec()
+    
+
+  const articlesNb = await Article.find({ designation: { $regex: filtre, $options: "i" }})
+   .exec()
+
+    res.status(200).json({articles: articles, longueur : articlesNb.length});
+} catch (error) {
+    res.status(404).json({ message: error.message });
+}
+});
+
+/*
 // 2 ème solution paginate
 
 router.get('/filtres/', async(req, res) => {
-  const { page, limit } = req.query;
+  const page = req.query.page || 1; // Get the current page number from the query parameters
+  const limit = req.query.limit ||5; // Number of items per page
 
   // Calculez le nombre d'éléments à sauter (offset)
   const offset = (page - 1) * limit;
@@ -103,6 +133,8 @@ router.get('/filtres/', async(req, res) => {
 }
 });
 
+
+
 // nombre total des enregistrements
 router.get('/nombreTot/', async (req, res, )=> {
   try {
@@ -114,7 +146,7 @@ router.get('/nombreTot/', async (req, res, )=> {
   }
 
 });
-
+*/
 
 // créer un nouvel article
 router.post('/', async (req, res) =>  { 

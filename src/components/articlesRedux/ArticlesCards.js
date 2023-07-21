@@ -2,7 +2,7 @@ import React, { useEffect, useCallback,useState } from 'react';
 
 import { useDispatch, useSelector} from 'react-redux';
 
-import { fetchArticlesPag , getTot } from '../../features/articleSlice'; 
+import { fetchArticlesPag  } from '../../features/articleSlice'; 
 
 import ArticlesCardsAffiche from './ArticlesCardsAffiche';
 
@@ -21,16 +21,20 @@ const CardsList = () => {
       const itemsPerPage = 6
      
 
+const [filtre, setFiltre] = useState("");
+
         const cardsFetch = useCallback(() => {
         const mesParams={
+          filtre :filtre,
           currentPage:currentPage,
           itemsPerPage:itemsPerPage
         };
         dispatch(fetchArticlesPag(mesParams));
-        dispatch( getTot());
-      }, [currentPage,dispatch])
+  
+      }, [currentPage,dispatch,filtre,tot])
     
       useEffect(() => {
+      
         cardsFetch()
         }, [cardsFetch])
 
@@ -41,6 +45,10 @@ const CardsList = () => {
 
   return (
 <>
+<form>
+  Recherche par désignation
+  <input type="search" value={filtre} onChange={(e)=>setFiltre(e.target.value)} />
+</form>
 <ArticlesCardsAffiche />
       <Stack spacing={2}>
       <Typography>Page: {currentPage}</Typography>
