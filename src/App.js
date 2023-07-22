@@ -12,6 +12,8 @@ import CheckoutSuccess from './components/articlesRedux/CheckoutSuccess';
 import PdfCart from './components/articlesRedux/PdfCart';
 import StripePayment from './components/articlesRedux/StripePayment';
 import ArticlesCards from './components/articlesRedux/ArticlesCards';
+import PageCache from './components/fonctionsCacheRedis/PageCacheSansRedis';
+import ProductsAppAdmin from './admin/components/articles/ProductsAppAdmin'
 
 function App() {
   return (
@@ -29,6 +31,8 @@ function App() {
         <Route path="/pdfcart" element={<PdfCart/>}/>
         <Route path='/pay/:total' element={<StripePayment/>}/>
         <Route path="/articlesCardsPag" element={<ArticlesCards/>}/>
+        <Route path="/pageCache" element={<PageCache/>}/> 
+        <Route path='/articlesadmin' element={<ProductsAppAdmin/>}/> 
       </Routes>
       </Router>
     </div>

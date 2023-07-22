@@ -8,6 +8,7 @@ const cors=require("cors")
 
 const paymentRouter = require( "./routes/payment.route.js")
 
+
 dotenv.config()
 const app = express();
 
@@ -29,6 +30,7 @@ const connect = async () => {
 app.use(cors());
 //BodyParser Middleware
 app.use(express.json()); 
+
 
 //stripe payment
 app.use('/api/payment', paymentRouter);

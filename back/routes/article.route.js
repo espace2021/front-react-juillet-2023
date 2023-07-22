@@ -2,6 +2,14 @@ const express = require('express');
 const router = express.Router();
 const Article=require("../models/article")
 
+//Cas redis
+
+const redis = require('redis');
+const client = redis.createClient({
+  host: "127.0.0.1",
+  port: 6379,
+});
+
 //const mongoosePaginate = require('mongoose-paginate-v2');
 
 //const {verifyToken} =require("../middleware/verif-token")
@@ -199,4 +207,66 @@ router.delete('/:articleId', async (req, res)=> {
     res.status(404).json({ message: error.message });
     }   
 });
+
+//CAS REDIS
+
+// Middleware pour vérifier le caching avant de faire la requête MongoDB
+function checkCache(req, res, next) {
+  
+  const { id } = req.params;
+  client.get(id, (error, data) => {
+    if (error) throw error;
+    if (data !== null) {
+      res.json(JSON.parse(data));
+
+      console.log("mise en cache")
+    } else {
+      next();
+    }
+  });
+}
+/*
+function checkCache(req, res, next) {
+  const key = "__express__" + req.originalUrl || req.url;
+
+  client.get(key).then(reply => {
+    
+    if (reply) {
+      res.send(JSON.parse(reply));
+    } else {
+      res.sendResponse = res.send;
+      res.send = (body) => {
+        //expire in 1 min
+        client.set(key, JSON.stringify(body), {'EX':60});
+        res.sendResponse(body);
+      };
+      next();
+    }
+  }).catch(err=>{
+    console.log(err);
+    res.status(500).send(err)
+  });
+}
+*/
+
+// Endpoint de votre API avec caching
+router.get('/data/:id', checkCache, async (req, res) => {
+  try {
+    const { id } = req.params;
+    // Faire la requête MongoDB ici (à titre d'exemple, nous utilisons une fonction fictive)
+    const data = await Article.findById(id);
+
+    // Mettre en cache la réponse dans Redis
+    client.setex(id, 3600, JSON.stringify(data)); 
+    // Exemple : met en cache pendant 1 heure (3600 secondes)
+
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: 'Erreur lors de la récupération des données.' });
+  }
+});
+
+// ****************************************************************
+
+
 module.exports = router;
