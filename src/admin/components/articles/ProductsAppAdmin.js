@@ -14,7 +14,7 @@ const ProductsAppAdmin = () => {
   const {articles} = useSelector((state)=>state.storearticles);
 
   let [page, setPage] = useState(1);
-  const PER_PAGE = 24;
+  const PER_PAGE = 8;
 
   const count = Math.ceil(articles.length / PER_PAGE);
   const _DATA = usePagination(articles, PER_PAGE);
