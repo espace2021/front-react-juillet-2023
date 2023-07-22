@@ -7,6 +7,8 @@ import AffichearticlesAdmin from './AffichearticlesAdmin';
 import Pagination from '@mui/material/Pagination';
 import usePagination from "./Pagination";
 
+import Insertarticle from './InsertArticle';
+
 const ProductsAppAdmin = () => {
 
   const dispatch = useDispatch();
@@ -38,6 +40,9 @@ const ProductsAppAdmin = () => {
      
   return (
     <div>
+        <div >
+        <Insertarticle/>
+        </div> 
 <AffichearticlesAdmin articles={_DATA.currentData()}/>
 
 <Pagination
