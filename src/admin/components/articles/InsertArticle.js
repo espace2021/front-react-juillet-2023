@@ -9,7 +9,9 @@ import {useDispatch,useSelector} from "react-redux";
 import {createArticle} from "../../../features/articleSlice"
 import {getScategories} from "../../../features/scategorieSlice";
 
-import {UploadFirebase} from '../../../utils/UploadFirebase';
+import  storage from "../../../firebaseConfig";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { Line } from 'rc-progress';
 
 import { FilePond,registerPlugin } from 'react-filepond'
 import 'filepond/dist/filepond.min.css';
@@ -21,6 +23,8 @@ registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview)
 
 
 const Insertarticle = () => {
+
+   const [percent,setPercent]=useState(0)
 
     const [file, setFile] = useState("");
   
@@ -64,6 +68,7 @@ const handleSubmit = (url) => {
   setImageart("");
   setScategorieID("");
   setValidated(false);
+  setPercent(0)
 
   setFile("")
 
@@ -80,30 +85,57 @@ const handleSubmit = (url) => {
   const handleUpload = (event) => {
     event.preventDefault();
     const form = event.currentTarget;
-   if (form.checkValidity() === true) {
-          if (!file[0].file) {
-              alert("Please upload an image first!");
-          }
-          else {
-            console.log(file[0].file)
-            resultHandleUpload(file[0].file,event);
-        }
-        if (!file[0].file) {
-          alert("Please upload an image first!");
-      }
     
-   setValidated(true);
-  };
+    if (form.checkValidity() === true) {
+     if (!file) {
+       alert('choose image first')
+     }
+     else {
+       console.log(file[0].file)
+       resultHandleUpload(file[0].file);
+    }
+     setValidated(true);
+   };
   }
   
   const resultHandleUpload = async(file) => {
     
     try {
      
-    const url =  await UploadFirebase(file);
-    console.log(url);
-  
-    handleSubmit(url)
+      let imageurl=""
+
+    const storageRef = ref(storage, `/files/${file.name}`);
+
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    await new Promise(resolve => {
+    uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+            const percent = Math.round(
+                (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+            );
+            setPercent(percent)
+           console.log(percent);
+        },
+        (err) => console.log(err),
+        async () => {
+                await getDownloadURL(uploadTask.snapshot.ref).then((url) => {
+                
+                imageurl=url;
+               
+                resolve();
+               
+            });
+           
+        }
+    );
+   
+}
+)
+    
+handleSubmit(imageurl)
+    
    } catch (error) {
       console.log(error);
    }
@@ -204,6 +236,7 @@ Qté stock Incorrect
               labelIdle='<span className="filepond--label-action">Browse One</span>'
             
             />
+     <Line percent={percent} strokeWidth={4} strokeColor="#008000" />            
 </Form.Group>
 <Form.Group as={Col} md="12">
 <Form.Label>S/Catégorie</Form.Label>

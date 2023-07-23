@@ -147,7 +147,7 @@ export const articleSlice = createSlice({
     })
     .addCase(createArticle.fulfilled, (state, action) => {
      
-      state.articles.push(action.payload);
+      state.articles.unshift(action.payload);
       state.isLoading=false;
       state.error=null;
       state.success=action.payload;

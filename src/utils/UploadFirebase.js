@@ -1,6 +1,7 @@
 import  storage from "../firebaseConfig";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
+
 export const UploadFirebase=async(file)=>{
     let imageurl=""
 
@@ -15,7 +16,7 @@ export const UploadFirebase=async(file)=>{
             const percent = Math.round(
                 (snapshot.bytesTransferred / snapshot.totalBytes) * 100
             );
-
+       
            console.log(percent);
         },
         (err) => console.log(err),

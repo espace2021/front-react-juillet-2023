@@ -26,17 +26,23 @@ const ProductsAppAdmin = () => {
     _DATA.jump(p);
   };
   
-     
- const listproduits= useCallback(()=>{
-    
+   /*     
+ const listproduits= ()=>{
+ 
       dispatch(getArticles());
-
-    }, [dispatch])
-
+console.log(articles)
+    }
+    
     useEffect(() => {
         listproduits()
-        }, [listproduits])
+        }, [dispatch])
+*/
 
+useEffect(() => {
+    
+  dispatch(getArticles());
+  console.log(articles)
+   },[dispatch]);
      
   return (
     <div>
