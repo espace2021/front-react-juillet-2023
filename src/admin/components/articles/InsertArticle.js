@@ -7,10 +7,10 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Row from 'react-bootstrap/Row';
 import {useDispatch,useSelector} from "react-redux";
 import {createArticle} from "../../../features/articleSlice"
+
 import {getScategories} from "../../../features/scategorieSlice";
 
-import  storage from "../../../firebaseConfig";
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import {UploadFirebase} from '../../../utils/UploadFirebase';
 import { Line } from 'rc-progress';
 
 import { FilePond,registerPlugin } from 'react-filepond'
@@ -21,10 +21,9 @@ import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css'
 
 registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview)
 
+const Createarticle = () => {
 
-const Insertarticle = () => {
-
-   const [percent,setPercent]=useState(0)
+  const [uploadProgress, setUploadProgress] = useState(0);
 
     const [file, setFile] = useState("");
   
@@ -58,8 +57,10 @@ const handleSubmit = (url) => {
   scategorieID: scategorieID
   }
   dispatch(createArticle(article))
+  
   .then(res=>{
-  console.log("Insert OK",res);
+    
+  
   setReference("");
   setDesignation("");
   setPrix("");
@@ -68,11 +69,13 @@ const handleSubmit = (url) => {
   setImageart("");
   setScategorieID("");
   setValidated(false);
-  setPercent(0)
 
   setFile("")
 
+  setUploadProgress(0)
+
   handleClose()
+  console.log("insertion OK")
 
 })   
 .catch(error=>{
@@ -85,186 +88,171 @@ const handleSubmit = (url) => {
   const handleUpload = (event) => {
     event.preventDefault();
     const form = event.currentTarget;
+   if (form.checkValidity() === true) {
+       if(file){
+          if (!file[0].file) {
+              alert("Please upload an image first!");
+          }
+          else {
+            console.log(file[0].file)
+            resultHandleUpload(file[0].file,event);
+        }
+       } else {
+          alert("Please upload an image first!");
+      }
     
-    if (form.checkValidity() === true) {
-     if (!file) {
-       alert('choose image first')
-     }
-     else {
-       console.log(file[0].file)
-       resultHandleUpload(file[0].file);
-    }
-     setValidated(true);
-   };
+   setValidated(true);
+  };
   }
   
   const resultHandleUpload = async(file) => {
     
     try {
      
-      let imageurl=""
-
-    const storageRef = ref(storage, `/files/${file.name}`);
-
-    const uploadTask = uploadBytesResumable(storageRef, file);
-
-    await new Promise(resolve => {
-    uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-            const percent = Math.round(
-                (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-            );
-            setPercent(percent)
-           console.log(percent);
-        },
-        (err) => console.log(err),
-        async () => {
-                await getDownloadURL(uploadTask.snapshot.ref).then((url) => {
-                
-                imageurl=url;
-               
-                resolve();
-               
-            });
-           
-        }
-    );
-   
-}
-)
+    const url =  await UploadFirebase(file, setUploadProgress);
     
-handleSubmit(imageurl)
-    
+    handleSubmit(url)
    } catch (error) {
       console.log(error);
    }
   
   }
+
   return (
-  <>
-  <Button variant="success"style={{'margin':10,'left':10}}
-  onClick={handleShow}>
-  Nouveau
-  </Button>
-  <Modal show={show} onHide={handleClose}>
-  <Form noValidate validated={validated} onSubmit={handleUpload}>
-  <Modal.Header closeButton>
-  <Modal.Title> <h1 align="center">Ajout Article</h1></Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-  <div className="container w-100 d-flex justify-content-center">
-  <div>
-  
-  <div className='form mt-3'>
-  <Row className="mb-2">
-  <Form.Group as={Col} md="6" >
-  <Form.Label >Référence *</Form.Label>
+    <>
+    <Button  
+        
+                    
+        onClick={handleShow}
+        variant="success"
+        size="sm"
+         style={{'margin':10,'left':10,fontFamily:'Arial'}}
+      >
+      <i className="fa-solid fa-circle-plus"></i>
+      &nbsp;
+      Nouveau
+      </Button>
+    <Modal show={show} onHide={handleClose}>
+    <Form noValidate validated={validated} onSubmit={handleUpload}>
+    <Modal.Header closeButton>
+    <Modal.Title> <h1 align="center">Ajout Article</h1></Modal.Title>
+    </Modal.Header>
+    <Modal.Body>
+    <div className="container w-100 d-flex justify-content-center">
+    <div>
+    
+    <div className='form mt-3'>
+    <Row className="mb-2">
+    <Form.Group as={Col} md="6" >
+    <Form.Label >Référence *</Form.Label>
+    <Form.Control
+    required
+    type="text"
+    placeholder="Référence"
+    value={reference}
+    onChange={(e)=>setReference(e.target.value)}
+    />
+    <Form.Control.Feedback type="invalid">
+    Saisir Référence Article
+    </Form.Control.Feedback>
+    </Form.Group>
+    <Form.Group as={Col} md="6">
+    <Form.Label>Désignation *</Form.Label>
+    <Form.Control
+    required
+    type="text"
+    placeholder="Désignation"
+    value={designation}
+    onChange={(e)=>setDesignation(e.target.value)}
+    />
+    <Form.Control.Feedback type="invalid">
+    Saisir Désignation
+    </Form.Control.Feedback>
+    </Form.Group>
+    </Row>
+    <Row className="mb-2">
+    <Form.Group className="col-md-6">
+    <Form.Label>Marque *</Form.Label>
+    <InputGroup hasValidation>
+    <Form.Control
+    type="text"
+    required
+    placeholder="Marque"
+    value={marque}
+    onChange={(e)=>setMarque(e.target.value)}
+    />
+    <Form.Control.Feedback type="invalid">
+    Marque Incorrecte
+    </Form.Control.Feedback>
+    </InputGroup>
+    </Form.Group>
+    <Form.Group as={Col} md="6">
+  <Form.Label>Prix</Form.Label>
   <Form.Control
-  required
-  type="text"
-  placeholder="Référence"
-  value={reference}
-  onChange={(e)=>setReference(e.target.value)}
+  type="number"
+  placeholder="Prix"
+  value={prix}
+  onChange={(e)=>setPrix(e.target.value)}
   />
-  <Form.Control.Feedback type="invalid">
-  Saisir Référence Article
-  </Form.Control.Feedback>
-  </Form.Group>
-  <Form.Group as={Col} md="6">
-  <Form.Label>Désignation *</Form.Label>
-  <Form.Control
-  required
-  type="text"
-  placeholder="Désignation"
-  value={designation}
-  onChange={(e)=>setDesignation(e.target.value)}
-  />
-  <Form.Control.Feedback type="invalid">
-  Saisir Désignation
-  </Form.Control.Feedback>
   </Form.Group>
   </Row>
-  <Row className="mb-2">
-  <Form.Group className="col-md-6">
-  <Form.Label>Marque *</Form.Label>
-  <InputGroup hasValidation>
+  <Row className="mb-3">
+  <Form.Group className="col-md-6 ">
+  <Form.Label>
+  Qté stock<span className="req-tag">*</span>
+  </Form.Label>
   <Form.Control
-  type="text"
   required
-  placeholder="Marque"
-  value={marque}
-  onChange={(e)=>setMarque(e.target.value)}
+  type="number"
+  value={qtestock}
+  onChange={(e)=>setQtestock(e.target.value)}
+  placeholder="Qté stock"
   />
   <Form.Control.Feedback type="invalid">
-  Marque Incorrecte
+  Qté stock Incorrect
   </Form.Control.Feedback>
-  </InputGroup>
   </Form.Group>
   <Form.Group as={Col} md="6">
-<Form.Label>Prix</Form.Label>
-<Form.Control
-type="number"
-placeholder="Prix"
-value={prix}
-onChange={(e)=>setPrix(e.target.value)}
-/>
-</Form.Group>
-</Row>
-<Row className="mb-3">
-<Form.Group className="col-md-6 ">
-<Form.Label>
-Qté stock<span className="req-tag">*</span>
-</Form.Label>
-<Form.Control
-required
-type="number"
-value={qtestock}
-onChange={(e)=>setQtestock(e.target.value)}
-placeholder="Qté stock"
-/>
-<Form.Control.Feedback type="invalid">
-Qté stock Incorrect
-</Form.Control.Feedback>
-</Form.Group>
-<Form.Group as={Col} md="6">
-<Form.Label>Image</Form.Label>
-<FilePond
-              files={file}
-              allowMultiple={false}
-              onupdatefiles={setFile}
-              labelIdle='<span className="filepond--label-action">Browse One</span>'
-            
-            />
-     <Line percent={percent} strokeWidth={4} strokeColor="#008000" />            
-</Form.Group>
-<Form.Group as={Col} md="12">
-<Form.Label>S/Catégorie</Form.Label>
-<Form.Control
-as="select"
-type="select"
-value={scategorieID}
-onChange={(e)=>setScategorieID(e.target.value)}
->
-<option></option>
-{!isLoading? scategories.map((scat)=><option key={scat._id}
-value={scat._id}>{scat.nomscategorie}</option>):null}
-</Form.Control>
-</Form.Group>
-</Row>
-</div>
-</div>
-</div>
-</Modal.Body>
-<Modal.Footer>
-<Button variant="secondary" onClick={handleClose}>
-Fermer
-</Button>
-<Button type="submit">Enregistrer</Button>
-</Modal.Footer>
-</Form>
-</Modal>
-</>
-)
+  <Form.Label>Image</Form.Label>
+  <FilePond
+                files={file}
+                allowMultiple={false}
+                onupdatefiles={setFile}
+                labelIdle='<span className="filepond--label-action">Browse One</span>'
+              
+              />
+             
+  </Form.Group>
+  <Form.Group as={Col} md="12">
+  <Form.Label>S/Catégorie</Form.Label>
+  <Form.Control
+  as="select"
+  type="select"
+  value={scategorieID}
+  onChange={(e)=>setScategorieID(e.target.value)}
+  >
+  <option></option>
+  {!isLoading? scategories.map((scat)=><option key={scat._id}
+  value={scat._id}>{scat.nomscategorie}</option>):null}
+  </Form.Control>
+  </Form.Group>
+  </Row>
+  </div>
+  </div>
+  </div>
+  </Modal.Body>
+  <Modal.Footer>
+  <Line percent={uploadProgress} strokeWidth={3} strokeColor="#ff0000" /> 
+  <Button variant="secondary" onClick={handleClose}>
+  Fermer
+  </Button>
+  <Button type="submit">Enregistrer</Button>
+  </Modal.Footer>
+  </Form>
+  </Modal>
+  </>
+  
+  )
 }
-export default Insertarticle
+
+export default Createarticle
