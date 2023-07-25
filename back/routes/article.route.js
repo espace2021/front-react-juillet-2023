@@ -2,13 +2,17 @@ const express = require('express');
 const router = express.Router();
 const Article=require("../models/article")
 
+// ...............................
 //Cas redis
 
 const redis = require('redis');
-const client = redis.createClient({
-  host: "127.0.0.1",
-  port: 6379,
-});
+const redisClient = redis.createClient();
+(async () => {
+  redisClient.on("error", (error) => console.error(`Ups : ${error}`));
+  await redisClient.connect();
+})();
+
+// .........................
 
 //const mongoosePaginate = require('mongoose-paginate-v2');
 
@@ -208,64 +212,54 @@ router.delete('/:articleId', async (req, res)=> {
     }   
 });
 
+//......................................................
 //CAS REDIS
 
-// Middleware pour vérifier le caching avant de faire la requête MongoDB
-function checkCache(req, res, next) {
-  
-  const { id } = req.params;
-  client.get(id, (error, data) => {
-    if (error) throw error;
-    if (data !== null) {
-      res.json(JSON.parse(data));
 
-      console.log("mise en cache")
-    } else {
-      next();
-    }
-  });
-}
-/*
-function checkCache(req, res, next) {
-  const key = "__express__" + req.originalUrl || req.url;
+//méthode caching
+async function fetchART(id) {
+  const cacheKey = `ARTICLES_${id}`;
 
-  client.get(key).then(reply => {
-    
-    if (reply) {
-      res.send(JSON.parse(reply));
-    } else {
-      res.sendResponse = res.send;
-      res.send = (body) => {
-        //expire in 1 min
-        client.set(key, JSON.stringify(body), {'EX':60});
-        res.sendResponse(body);
-      };
-      next();
+  // First attempt to retrieve data from the cache
+  try {
+    const cachedResult = await redisClient.get(cacheKey);
+
+    if (cachedResult !== null) {
+      // Parse the JSON data retrieved from the cache
+      // nous utilisons JSON.parse(cachedResult) 
+      // pour convertir les données récupérées du cache en objet JSON
+      const parsedResult = JSON.parse(cachedResult);
+      console.log('Data from cache.');
+      return parsedResult;
     }
-  }).catch(err=>{
-    console.log(err);
-    res.status(500).send(err)
-  });
+  } catch (error) {
+    console.error('Something happened to Redis', error);
+  }
+
+  // If the cache is empty or we fail reading it, default back to the API
+  const apiResponse = await Article.findById(id);
+  console.log('Data requested from the ART API.');
+
+  // Finally, if you got any results, save the data back to the cache
+  if (apiResponse) {
+    try {
+      // Save the result in Redis with a caching duration of 10 seconds
+      await redisClient.set(cacheKey, JSON.stringify(apiResponse),  { EX: 10 });
+    } catch (error) {
+      console.error('Something happened to Redis', error);
+    }
+  }
+  return apiResponse;
 }
-*/
+
 
 // Endpoint de votre API avec caching
-router.get('/data/:id', checkCache, async (req, res) => {
-  try {
-    const { id } = req.params;
-    // Faire la requête MongoDB ici (à titre d'exemple, nous utilisons une fonction fictive)
-    const data = await Article.findById(id);
+router.get('/datacached/:id', async (req, res) => {
+  const { id } = req.params;
 
-    // Mettre en cache la réponse dans Redis
-    client.setex(id, 3600, JSON.stringify(data)); 
-    // Exemple : met en cache pendant 1 heure (3600 secondes)
+     res.send(await fetchART(id));
 
-    res.json(data);
-  } catch (error) {
-    res.status(500).json({ error: 'Erreur lors de la récupération des données.' });
-  }
 });
-
 // ****************************************************************
 
 
