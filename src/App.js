@@ -14,6 +14,7 @@ import StripePayment from './components/articlesRedux/StripePayment';
 import ArticlesCards from './components/articlesRedux/ArticlesCards';
 import PageCache from './components/fonctionsCacheRedis/PageCacheSansRedis';
 import ProductsAppAdmin from './admin/components/articles/ProductsAppAdmin'
+import  Dashboard  from './admin/components/Dashboard'
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
         <Route path="/articlesCardsPag" element={<ArticlesCards/>}/>
         <Route path="/pageCache" element={<PageCache/>}/> 
         <Route path='/articlesadmin' element={<ProductsAppAdmin/>}/> 
+        <Route path='/dashboard' element={<Dashboard/>}/> 
       </Routes>
       </Router>
     </div>
